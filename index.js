@@ -1,6 +1,8 @@
 const robot = require("robotjs")
 
-App()
+setTimeout(() => {
+    App()
+}, 3000)
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -14,10 +16,6 @@ function App() {
     // await sleep(2000)
     console.log(robot.getMousePos())
 
-    setTimeout(() => {
-        getScreenShot()
-    }, 2000)
-
     const treeColourArr = [
         "324621",
         "0d0f05",
@@ -26,19 +24,32 @@ function App() {
         "66665d",
         "3e451e",
     ]
-    const getScreenShot = () => {
-        const size = 10
+
+    let i = 0
+    loop()
+    function loop() {
+        setTimeout(() => {
+            getScreenShot()
+            i++
+            if (i < 10) {
+                loop()
+            }
+        }, Math.floor(Math.random() * 2000))
+    }
+
+    function getScreenShot() {
         const screenImg = robot.screen.capture()
-        const multi = screenImg.width / size
         const colour = screenImg.colorAt(
             robot.getMousePos().x,
             robot.getMousePos().y
         )
+        treeColourArr.includes(colour)
+            ? (robot.mouseClick(), console.log("got one!"))
+            : randomScreenPosition()
         console.log(colour)
-        randomScreenPosition()
     }
 
-    const randomScreenPosition = () => {
+    function randomScreenPosition() {
         const screenSize = robot.getScreenSize()
         const randX = Math.floor(Math.random() * screenSize.width - 50)
         const randY = Math.floor(Math.random() * screenSize.height - 50)
